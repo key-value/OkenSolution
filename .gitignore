@@ -3,3 +3,11 @@
 ################################################################################
 
 /OkexSolution/Oken.Services/bin/Debug
+/OkexSolution/Oken.Services/obj/Debug
+/OkexSolution/packages/Newtonsoft.Json.10.0.3
+/OkexSolution/.vs/OkexSolution/v15/Server/sqlite3
+/OkexSolution/.vs/OkexSolution/v15
+/OkexSolution/WpfApp/bin/Debug
+/OkexSolution/WpfApp/obj/Debug
+/OkexSolution/Oken.ViewModel/obj/Debug
+/OkexSolution/Oken.ViewModel/bin/Debug
