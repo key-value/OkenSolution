@@ -49,6 +49,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Currencie.cs" />
+    <Compile Include="Decorate.cs" />
     <Compile Include="BuissnesServiceImpl.cs" />
     <Compile Include="Contract.cs" />
     <Compile Include="MemoryDB.cs" />
@@ -57,6 +59,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Oken.ViewModel\Oken.ViewModel.csproj">
+      <Project>{03062002-2EF2-46E0-93F5-2DA83EF09935}</Project>
+      <Name>Oken.ViewModel</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

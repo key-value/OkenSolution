@@ -11,6 +11,12 @@ namespace Oken.ViewModel
         private int _state;
         private ObservableCollection<AnalysisCurrency> _analysisCurrencies = new ObservableCollection<AnalysisCurrency>();
         private string _stateName;
+        private decimal _ethUsdtBuy;
+        private decimal _btcUsdtBuy;
+        private decimal _ethBtcBuy;
+        private decimal _ethUsdtSell;
+        private decimal _btcUsdtSell;
+        private decimal _ethBtcSell;
 
         public int State
         {
@@ -51,6 +57,41 @@ namespace Oken.ViewModel
                     StateName = "重连失败"; break;
                 default: break;
             }
+        }
+
+        public decimal eth_usdt_Buy
+        {
+            get { return _ethUsdtBuy; }
+            set { SetProperty(ref _ethUsdtBuy, value); }
+        }
+
+        public decimal btc_usdt_Buy
+        {
+            get { return _btcUsdtBuy; }
+            set { SetProperty(ref _btcUsdtBuy, value); }
+        }
+
+        public decimal eth_btc_Buy
+        {
+            get { return _ethBtcBuy; }
+            set { SetProperty(ref _ethBtcBuy, value); }
+        }
+        public decimal eth_usdt_Sell
+        {
+            get { return _ethUsdtSell; }
+            set { SetProperty(ref _ethUsdtSell, value); }
+        }
+
+        public decimal btc_usdt_Sell
+        {
+            get { return _btcUsdtSell; }
+            set { SetProperty(ref _btcUsdtSell, value); }
+        }
+
+        public decimal eth_btc_Sell
+        {
+            get { return _ethBtcSell; }
+            set { SetProperty(ref _ethBtcSell, value); }
         }
     }
 }

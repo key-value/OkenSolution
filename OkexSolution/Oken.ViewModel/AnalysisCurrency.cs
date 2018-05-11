@@ -14,5 +14,10 @@ namespace Oken.ViewModel
         /// 分析数值
         /// </summary>
         public decimal AnalysisNumber { get; set; }
+
+        /// <summary>
+        /// 分析数值
+        /// </summary>
+        public List<decimal> AnalysisNumbers { get; set; }
     }
 }

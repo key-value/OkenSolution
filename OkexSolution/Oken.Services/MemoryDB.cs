@@ -9,6 +9,6 @@ namespace Oken.Services
 {
     public class MemoryDB
     {
-        public static ConcurrentDictionary<string, Contract> dictionary = new ConcurrentDictionary<string, Contract>();
+        public static ConcurrentDictionary<string, Currencie> dictionary = new ConcurrentDictionary<string, Currencie>();
     }
 }

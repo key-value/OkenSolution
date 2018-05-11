@@ -26,7 +26,7 @@ namespace WpfApp
     {
         static string url = "wss://real.okex.com:10440/websocket/okexapi";
         //国际站配置为"wss://real.okcoin.com:10440/websocket/okcoinapi"
-        List<string> bibiList = new List<string>() { "btc", "ltc", "eth", "etc", "bch" };
+        List<string> bibiList = new List<string>() { "bch", "ltc", "OKB", "1ST", "ABT" };
 
         private MainModel _mainModel = new MainModel();
 
@@ -40,11 +40,24 @@ namespace WpfApp
             Loaded += MainWindow_Loaded;
         }
 
-        private void BuissnesServiceImpl_UpdateCurrencyBodyAction(string arg1, int arg2)
+        private void BuissnesServiceImpl_UpdateCurrencyBodyAction(string arg1, string arg3, Currencie arg2)
         {
             this.Dispatcher.Invoke(() =>
             {
-                var analysisCurrency = _mainModel.AnalysisCurrencies.FirstOrDefault(x => x.Name == arg1);
+                switch (arg1)
+                {
+                    case "btc_usdt":
+                        _mainModel.btc_usdt_Buy = arg2.Buy_Usdt;
+                        _mainModel.btc_usdt_Sell = arg2.Sell_Usdt; return;
+                    case "eth_btc":
+                        _mainModel.eth_btc_Buy = arg2.Buy_Btc;
+                        _mainModel.eth_btc_Sell = arg2.Sell_Btc; return;
+                    case "eth_usdt":
+                        _mainModel.eth_usdt_Buy = arg2.Buy_Usdt;
+                        _mainModel.eth_usdt_Sell = arg2.Sell_Usdt; return;
+                    default: break;
+                }
+                var analysisCurrency = _mainModel.AnalysisCurrencies.FirstOrDefault(x => x.Name == arg3);
                 if (analysisCurrency != null)
                 {
                     _mainModel.AnalysisCurrencies.Remove(analysisCurrency);
@@ -52,9 +65,9 @@ namespace WpfApp
                 else
                 {
                     analysisCurrency = new AnalysisCurrency();
+                    analysisCurrency.Name = arg3;
                 }
-                analysisCurrency.Name = arg1;
-                analysisCurrency.AnalysisNumber = arg2;
+
                 _mainModel.AnalysisCurrencies.Add(analysisCurrency);
             });
         }
@@ -81,11 +94,16 @@ namespace WpfApp
             Task.Factory.StartNew(() =>
             {
                 var rootobjects = new List<Rootobject>();
+                rootobjects.Add(Rootobject.CreateNew("eth_usdt"));
+                rootobjects.Add(Rootobject.CreateNew("eth_btc"));
+                rootobjects.Add(Rootobject.CreateNew("btc_usdt"));
+                wb.send(JsonConvert.SerializeObject(rootobjects));
                 foreach (var bibi in bibiList)
                 {
-                    rootobjects.Add(Rootobject.CreateNew(bibi));
+                    rootobjects = new List<Rootobject>();
+                    rootobjects.AddRange(Rootobject.CreateNewList(bibi));
+                    wb.send(JsonConvert.SerializeObject(rootobjects));
                 }
-                wb.send(JsonConvert.SerializeObject(rootobjects));
                 _mainModel.UpdateState(2);
             });
 

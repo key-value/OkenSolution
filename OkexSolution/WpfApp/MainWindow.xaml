@@ -9,71 +9,115 @@
     <Window.DataContext>
         <viewModel:MainModel></viewModel:MainModel>
     </Window.DataContext>
-    <StackPanel>
-        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
+    <DockPanel >
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
             <Button Name="SocketClient" Content="启动" Height="40" Width="70" Click="SocketClient_OnClick"></Button>
             <Label Content="{Binding State}" Margin="50,0,0,0" VerticalAlignment="Center"></Label>
             <Label Content="{Binding StateName}" Margin="50,0,0,0" VerticalAlignment="Center"></Label>
+            <Label Content="最小比值" Margin="50,0,0,0" VerticalAlignment="Center" Target="{Binding ElementName=TextBoxFilerNum}"></Label>
+            <TextBox Name="TextBoxFilerNum" Margin="20,0,0,0" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"></TextBox>
         </StackPanel>
-        <ListView BorderThickness="0" Margin="15,0"
+        <Border DockPanel.Dock="Top" BorderBrush="DodgerBlue" BorderThickness="0,1,0,1">
+
+            <Grid Height="120" Margin="20,5,20,5"  >
+                <Grid.RowDefinitions>
+                    <RowDefinition>
+                    </RowDefinition>
+                    <RowDefinition>
+                    </RowDefinition>
+                    <RowDefinition>
+                    </RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="*"></ColumnDefinition>
+                    <ColumnDefinition  Width="*"></ColumnDefinition>
+                    <ColumnDefinition  Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="FontSize"  Value="18"/>
+                        <Setter Property="HorizontalContentAlignment"  Value="Center"/>
+                        <Setter Property="VerticalContentAlignment"  Value="Center"/>
+                        <Setter Property="Margin"  Value="0,0,0,0"/>
+                        <Setter Property="Padding"  Value="0,0,0,0"/>
+                    </Style>
+                </Grid.Resources>
+
+                <Label Content="btc-usdt" Grid.Row="0" Grid.Column="0"></Label>
+                <Label Content="eth-btc" Grid.Row="0" Grid.Column="1"></Label>
+                <Label Content="eth-usdt" Grid.Row="0" Grid.Column="2"></Label>
+                <Label Content="{Binding btc_usdt_Buy}" Grid.Row="1" Grid.Column="0"></Label>
+                <Label Content="{Binding eth_btc_Buy}" Grid.Row="1" Grid.Column="1"></Label>
+                <Label Content="{Binding eth_usdt_Buy}" Grid.Row="1" Grid.Column="2"></Label>
+                <Label Content="{Binding btc_usdt_Sell}" Grid.Row="2" Grid.Column="0"></Label>
+                <Label Content="{Binding eth_btc_Sell}" Grid.Row="2" Grid.Column="1"></Label>
+                <Label Content="{Binding eth_usdt_Sell}" Grid.Row="2" Grid.Column="2"></Label>
+            </Grid>
+
+        </Border>
+        <ScrollViewer DockPanel.Dock="Bottom">
+            <ListView BorderThickness="0" Margin="15,0"
                   Focusable="False" SnapsToDevicePixels="True" Background="Transparent"
                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
                   ItemsSource="{Binding AnalysisCurrencies}">
-            <ListView.Style>
-                <Style>
-                    <Setter Property="FocusManager.IsFocusScope" Value="False"></Setter>
-                </Style>
-            </ListView.Style>
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel  ></StackPanel>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemContainerStyle>
-                <Style>
-                    <Setter Property="ListBoxItem.Margin" Value="0,0,10,0"></Setter>
-                    <Setter Property="ListBoxItem.Padding" Value="0"></Setter>
-                    <Setter Property="ListBoxItem.BorderThickness" Value="0"></Setter>
-                    <Setter Property="ListBoxItem.Foreground" Value="White"></Setter>
-                    <Setter Property="ListBoxItem.Background" Value="Transparent"></Setter>
-                    <Setter Property="ListBoxItem.HorizontalContentAlignment" Value="Center"></Setter>
-                    <Setter Property="ListBoxItem.VerticalContentAlignment" Value="Center"></Setter>
-                    <Style.Triggers>
-                        <Trigger Property="ListViewItem.IsMouseOver" Value="True">
-                            <Setter Property="ListViewItem.Cursor" Value="Hand"/>
-                        </Trigger>
-                        <Trigger Property="ListBoxItem.IsSelected" Value="True">
-                            <Setter Property="ListBoxItem.Background" Value="Transparent"></Setter>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ListView.ItemContainerStyle>
-            <ListView.ItemTemplate >
-                <DataTemplate x:Name="xxx" >
-                    <Label Focusable="False" >
-                        <Label.Style>
-                            <Style TargetType="{x:Type Label}">
-                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                <Setter Property="Padding" Value="0"></Setter>
-                                <Setter Property="Height" Value="40"></Setter>
-                                <Setter Property="HorizontalAlignment"  Value="Stretch"/>
-                                <Setter Property="VerticalAlignment"  Value="Stretch"/>
-                                <Setter Property="BorderBrush" Value="Transparent"/>
-                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                <Setter Property="Background" Value="Transparent"></Setter>
-                            </Style>
-                        </Label.Style>
-                        <StackPanel>
-                            <TextBlock TextAlignment="Center" Height="32" Text="{Binding Path=Name}" FontSize="16" Padding="5"
+                <ListView.Style>
+                    <Style>
+                        <Setter Property="FocusManager.IsFocusScope" Value="False"></Setter>
+                    </Style>
+                </ListView.Style>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel></StackPanel>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemContainerStyle>
+                    <Style>
+                        <Setter Property="ListBoxItem.Margin" Value="0,0,10,0"></Setter>
+                        <Setter Property="ListBoxItem.Padding" Value="0"></Setter>
+                        <Setter Property="ListBoxItem.BorderThickness" Value="0"></Setter>
+                        <Setter Property="ListBoxItem.Foreground" Value="White"></Setter>
+                        <Setter Property="ListBoxItem.Background" Value="Transparent"></Setter>
+                        <Setter Property="ListBoxItem.HorizontalContentAlignment" Value="Center"></Setter>
+                        <Setter Property="ListBoxItem.VerticalContentAlignment" Value="Center"></Setter>
+                        <Style.Triggers>
+                            <Trigger Property="ListViewItem.IsMouseOver" Value="True">
+                                <Setter Property="ListViewItem.Cursor" Value="Hand"/>
+                            </Trigger>
+                            <Trigger Property="ListBoxItem.IsSelected" Value="True">
+                                <Setter Property="ListBoxItem.Background" Value="Transparent"></Setter>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate >
+                    <DataTemplate x:Name="xxx" >
+                        <Label Focusable="False" >
+                            <Label.Style>
+                                <Style TargetType="{x:Type Label}">
+                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                    <Setter Property="Padding" Value="0"></Setter>
+                                    <Setter Property="Height" Value="40"></Setter>
+                                    <Setter Property="HorizontalAlignment"  Value="Stretch"/>
+                                    <Setter Property="VerticalAlignment"  Value="Stretch"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                    <Setter Property="Background" Value="Transparent"></Setter>
+                                </Style>
+                            </Label.Style>
+                            <StackPanel>
+                                <TextBlock TextAlignment="Center" Height="32" Text="{Binding Path=Name}" FontSize="16" Padding="5"
                                        HorizontalAlignment="Center" VerticalAlignment="Center">
 
-                            </TextBlock>
-                        </StackPanel>
-                    </Label>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </StackPanel>
+                                </TextBlock>
+                            </StackPanel>
+                        </Label>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollViewer>
+    </DockPanel>
 </Window>
+
+
 

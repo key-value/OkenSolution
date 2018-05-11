@@ -15,12 +15,13 @@ namespace websocket
 
         public static event Action<int> StateChangeAction;
 
-        public static event Action<string, int> UpdateCurrencyBodyAction;
+        public static event Action<string, string, Currencie> UpdateCurrencyBodyAction;
 
 
         public void onReceive(string msg)
         {
-            var regex = new Regex("ok_sub_futureusd_([^_]*)_ticker_");
+            var regex = new Regex(@"ok_sub_spot_(?<input>[^_]*)_(?<output>[^_]*)_ticker");
+            Console.WriteLine(msg);
             if (!regex.IsMatch(msg))
             {
                 if (msg == "{\"event\":\"pong\"}")
@@ -39,19 +40,40 @@ namespace websocket
                 foreach (var objContract in contracts)
                 {
                     var match = regex.Match(objContract.channel);
-                    if (match.Groups.Count != 2)
+
+                    Group input = match.Groups["input"];
+                    Group output = match.Groups["output"];
+                    if (string.IsNullOrEmpty(input.Value) || string.IsNullOrEmpty(output.Value))
                     {
-                        return;
+                        continue;
                     }
-                    Group matchGroup = match.Groups[1];
-                    switch (matchGroup.Value)
+                    var matchput = $"{input.Value}_{output.Value}";
+                    switch (matchput)
                     {
                         case "addChannel":
                             break;
                         default:
-                            MemoryDB.dictionary.AddOrUpdate(matchGroup.Value, objContract,
-                                (s, contract) => objContract);
-                            UpdateCurrencyBodyAction?.BeginInvoke(matchGroup.Value, 1, null, null);
+
+                            var currencieName = input.Value;
+                            var currencie = new Currencie();
+                            MemoryDB.dictionary.GetOrAdd(currencieName, currencie);
+                            switch (output.Value.ToLower())
+                            {
+                                case "eth":
+                                    currencie.Buy_Eth = objContract.data.Buy();
+                                    currencie.Sell_Eth = objContract.data.Sell();
+                                    break;
+                                case "btc":
+                                    currencie.Buy_Btc = objContract.data.Buy();
+                                    currencie.Sell_Btc = objContract.data.Sell();
+                                    break;
+                                case "usdt":
+                                    currencie.Buy_Usdt = objContract.data.Buy();
+                                    currencie.Sell_Usdt = objContract.data.Sell();
+                                    break;
+                                default: return;
+                            }
+                            UpdateCurrencyBodyAction?.BeginInvoke(matchput, input.Value.ToLower(), currencie, null, null);
                             break;
 
                     }
