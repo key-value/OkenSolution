@@ -11,11 +11,14 @@
     </Window.DataContext>
     <DockPanel >
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
-            <Button Name="SocketClient" Content="启动" Height="40" Width="70" Click="SocketClient_OnClick"></Button>
-            <Label Content="{Binding State}" Margin="50,0,0,0" VerticalAlignment="Center"></Label>
+            <Button Name="SocketClient" Content="启动" Height="40" Width="70" IsEnabled="{Binding EnbleState}" Click="SocketClient_OnClick"></Button>
+            <!--<Label Content="{Binding State}" Margin="50,0,0,0" VerticalAlignment="Center"></Label>-->
             <Label Content="{Binding StateName}" Margin="50,0,0,0" VerticalAlignment="Center"></Label>
             <Label Content="最小比值" Margin="50,0,0,0" VerticalAlignment="Center" Target="{Binding ElementName=TextBoxFilerNum}"></Label>
-            <TextBox Name="TextBoxFilerNum" Margin="20,0,0,0" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"></TextBox>
+            <TextBox Name="TextBoxFilerNum" Margin="20,0,0,0" Text="{Binding MinNumber}" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"></TextBox>
+            <Button Name="InitCurrencie" Content="导入" Margin="20,0,0,0" Height="40" Width="70" IsEnabled="{Binding Imported}" Click="InitCurrencie_OnClick"></Button>
+            <Label Content="内存币种数量" Margin="50,0,0,0" VerticalAlignment="Center" Target="{Binding ElementName=CurrencieNum}"></Label>
+            <Label Name="LabelCurrencieNum" Margin="20,0,0,0" Content="{Binding CurrencieNum}" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"></Label>
         </StackPanel>
         <Border DockPanel.Dock="Top" BorderBrush="DodgerBlue" BorderThickness="0,1,0,1">
 
@@ -29,9 +32,9 @@
                     </RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition  Width="*"></ColumnDefinition>
-                    <ColumnDefinition  Width="*"></ColumnDefinition>
-                    <ColumnDefinition  Width="*"></ColumnDefinition>
+                    <ColumnDefinition/>
+                    <ColumnDefinition  Width="250"></ColumnDefinition>
+                    <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
                 <Grid.Resources>
                     <Style TargetType="Label">
@@ -55,67 +58,100 @@
             </Grid>
 
         </Border>
-        <ScrollViewer DockPanel.Dock="Bottom">
-            <ListView BorderThickness="0" Margin="15,0"
-                  Focusable="False" SnapsToDevicePixels="True" Background="Transparent"
-                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
+        <ListView BorderThickness="0" Margin="15,20,15,10"  DockPanel.Dock="Bottom"
+                  Focusable="False" SnapsToDevicePixels="True"
                   ItemsSource="{Binding AnalysisCurrencies}">
-                <ListView.Style>
-                    <Style>
-                        <Setter Property="FocusManager.IsFocusScope" Value="False"></Setter>
-                    </Style>
-                </ListView.Style>
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel></StackPanel>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemContainerStyle>
-                    <Style>
-                        <Setter Property="ListBoxItem.Margin" Value="0,0,10,0"></Setter>
-                        <Setter Property="ListBoxItem.Padding" Value="0"></Setter>
-                        <Setter Property="ListBoxItem.BorderThickness" Value="0"></Setter>
-                        <Setter Property="ListBoxItem.Foreground" Value="White"></Setter>
-                        <Setter Property="ListBoxItem.Background" Value="Transparent"></Setter>
-                        <Setter Property="ListBoxItem.HorizontalContentAlignment" Value="Center"></Setter>
-                        <Setter Property="ListBoxItem.VerticalContentAlignment" Value="Center"></Setter>
-                        <Style.Triggers>
-                            <Trigger Property="ListViewItem.IsMouseOver" Value="True">
-                                <Setter Property="ListViewItem.Cursor" Value="Hand"/>
-                            </Trigger>
-                            <Trigger Property="ListBoxItem.IsSelected" Value="True">
-                                <Setter Property="ListBoxItem.Background" Value="Transparent"></Setter>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate >
-                    <DataTemplate x:Name="xxx" >
-                        <Label Focusable="False" >
-                            <Label.Style>
-                                <Style TargetType="{x:Type Label}">
-                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                                    <Setter Property="Padding" Value="0"></Setter>
-                                    <Setter Property="Height" Value="40"></Setter>
-                                    <Setter Property="HorizontalAlignment"  Value="Stretch"/>
-                                    <Setter Property="VerticalAlignment"  Value="Stretch"/>
-                                    <Setter Property="BorderBrush" Value="Transparent"/>
-                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
-                                    <Setter Property="Background" Value="Transparent"></Setter>
-                                </Style>
-                            </Label.Style>
-                            <StackPanel>
-                                <TextBlock TextAlignment="Center" Height="32" Text="{Binding Path=Name}" FontSize="16" Padding="5"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ListView.Resources>
+                <Style TargetType="{x:Type TextBlock}">
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    <Setter Property="Padding" Value="0"></Setter>
+                    <Setter Property="Height" Value="40"></Setter>
+                    <Setter Property="Background" Value="Transparent"></Setter>
+                    <Setter Property="MinWidth" Value="100"></Setter>
+                </Style>
+            </ListView.Resources>
+            <ListView.Style>
+                <Style>
+                    <Setter Property="FocusManager.IsFocusScope" Value="False"></Setter>
+                </Style>
+            </ListView.Style>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel></StackPanel>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}" >
+                    <Setter Property="ListViewItem.Margin" Value="0,0,10,0"></Setter>
+                    <Setter Property="ListViewItem.Padding" Value="0"></Setter>
+                    <Setter Property="ListViewItem.BorderThickness" Value="0"></Setter>
+                    <Setter Property="ListViewItem.Background" Value="Transparent"></Setter>
+                    <Setter Property="ListViewItem.HorizontalContentAlignment" Value="{Binding Path=HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"></Setter>
+                    <Setter Property="ListViewItem.VerticalContentAlignment" Value="{Binding Path=VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"></Setter>
+                    <Setter Property="ListViewItem.HorizontalAlignment" Value="Stretch"></Setter>
+                    <Setter Property="ListViewItem.VerticalAlignment" Value="Stretch"></Setter>
+                    <Style.Triggers>
+                        <Trigger Property="ListViewItem.IsMouseOver" Value="True">
+                            <Setter Property="ListViewItem.Cursor" Value="Hand"/>
+                        </Trigger>
+                        <Trigger Property="ListViewItem.IsSelected" Value="True">
+                            <Setter Property="ListViewItem.Background" Value="Transparent"></Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate >
+                <DataTemplate x:Name="DataTemplate1" >
+                    <Grid Width="{Binding Width,RelativeSource={RelativeSource AncestorType={x:Type ListView}}}" >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MinWidth="50px" Width="*"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="50px" Width="*"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="50px" Width="*"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="50px" Width="*"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="50px" Width="*"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="50px" Width="*"></ColumnDefinition>
+                            <ColumnDefinition MinWidth="50px" Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Name="TextBlock1" TextAlignment="Center" Height="32" Text="{Binding Path=Name}" FontSize="16" Padding="5"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="0">
+                        </TextBlock>
 
-                                </TextBlock>
-                            </StackPanel>
-                        </Label>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </ScrollViewer>
+                        <TextBlock  Name="TextAnalysisNumber1" TextAlignment="Center" Height="32" Text="{Binding Path=AnalysisNumber1,StringFormat='0.#####'}" FontSize="16" Padding="5"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1">
+
+                            <!--<TextBlock.Style>
+                                <Style>
+                                    <Style.Triggers>
+                                        <DataTrigger  Binding="{Binding AnalysisNumber1}"  Value="1">
+                                            <Setter TargetName="TextAnalysisNumber1" Property="Foreground" Value="Red" ></Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>-->
+                        </TextBlock>
+                        <TextBlock  TextAlignment="Center" Height="32" Text="{Binding Path=AnalysisNumber2,StringFormat='0.#####'}" FontSize="16" Padding="5"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2">
+                        </TextBlock>
+                        <TextBlock  TextAlignment="Center" Height="32" Text="{Binding Path=AnalysisNumber3,StringFormat='0.#####'}" FontSize="16" Padding="5"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="3">
+                        </TextBlock>
+                        <TextBlock  TextAlignment="Center" Height="32" Text="{Binding Path=AnalysisNumber4,StringFormat='0.#####'}" FontSize="16" Padding="5"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="4">
+                        </TextBlock>
+                        <TextBlock  TextAlignment="Center" Height="32" Text="{Binding Path=AnalysisNumber5,StringFormat='0.#####'}" FontSize="16" Padding="5"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="5">
+                        </TextBlock>
+                        <TextBlock  TextAlignment="Center" Height="32" Text="{Binding Path=AnalysisNumber6,StringFormat='0.#####'}" FontSize="16" Padding="5"
+                                            HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="6">
+                        </TextBlock>
+                    </Grid>
+
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+
+
     </DockPanel>
 </Window>
 

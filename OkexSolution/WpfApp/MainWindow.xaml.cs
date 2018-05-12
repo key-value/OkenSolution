@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,7 +30,7 @@ namespace WpfApp
     {
         static string url = "wss://real.okex.com:10440/websocket/okexapi";
         //国际站配置为"wss://real.okcoin.com:10440/websocket/okcoinapi"
-        List<string> bibiList = new List<string>() { "bch", "ltc", "OKB", "1ST", "ABT" };
+        List<string> bibiList = new List<string>();
 
         private MainModel _mainModel = new MainModel();
 
@@ -40,36 +44,78 @@ namespace WpfApp
             Loaded += MainWindow_Loaded;
         }
 
+        private object obj = new object();
         private void BuissnesServiceImpl_UpdateCurrencyBodyAction(string arg1, string arg3, Currencie arg2)
         {
             this.Dispatcher.Invoke(() =>
             {
+                var hit = false;
                 switch (arg1)
                 {
                     case "btc_usdt":
+                        hit = true;
                         _mainModel.btc_usdt_Buy = arg2.Buy_Usdt;
-                        _mainModel.btc_usdt_Sell = arg2.Sell_Usdt; return;
+                        _mainModel.btc_usdt_Sell = arg2.Sell_Usdt;
+                        break;
                     case "eth_btc":
+                        hit = true;
                         _mainModel.eth_btc_Buy = arg2.Buy_Btc;
-                        _mainModel.eth_btc_Sell = arg2.Sell_Btc; return;
+                        _mainModel.eth_btc_Sell = arg2.Sell_Btc;
+                        break;
                     case "eth_usdt":
+                        hit = true;
                         _mainModel.eth_usdt_Buy = arg2.Buy_Usdt;
-                        _mainModel.eth_usdt_Sell = arg2.Sell_Usdt; return;
-                    default: break;
+                        _mainModel.eth_usdt_Sell = arg2.Sell_Usdt;
+                        break;
                 }
-                var analysisCurrency = _mainModel.AnalysisCurrencies.FirstOrDefault(x => x.Name == arg3);
-                if (analysisCurrency != null)
+
+                if (hit)
                 {
-                    _mainModel.AnalysisCurrencies.Remove(analysisCurrency);
+                    _mainModel.AnalysisCurrencies.Clear();
+                    var newList = MemoryDB.dictionary.ToDictionary(x => x.Key, x => x.Value);
+                    foreach (var currency in newList)
+                    {
+                        FreshTable(currency.Key, currency.Value);
+                    }
                 }
                 else
                 {
-                    analysisCurrency = new AnalysisCurrency();
-                    analysisCurrency.Name = arg3;
+                    FreshTable(arg3, arg2);
                 }
 
-                _mainModel.AnalysisCurrencies.Add(analysisCurrency);
             });
+        }
+
+        private void FreshTable(string arg3, Currencie arg2)
+        {
+            var currencyNum = 0;
+            var analysisCurrency = _mainModel.AnalysisCurrencies.FirstOrDefault(x => x.Name == arg3);
+            currencyNum = bibiList.IndexOf(arg3);
+            if (analysisCurrency != null)
+            {
+                _mainModel.AnalysisCurrencies.Remove(analysisCurrency);
+            }
+            else
+            {
+                analysisCurrency = new AnalysisCurrency();
+                analysisCurrency.Name = arg3;
+            }
+            if (currencyNum > _mainModel.AnalysisCurrencies.Count)
+            {
+                currencyNum = _mainModel.AnalysisCurrencies.Count;
+            }
+            var decorate = new Decorate();
+            decorate.Analysis(analysisCurrency, this._mainModel, arg2);
+            if (analysisCurrency.AnalysisNumber1 < _mainModel.MinNumber &&
+                analysisCurrency.AnalysisNumber2 < _mainModel.MinNumber &&
+                analysisCurrency.AnalysisNumber3 < _mainModel.MinNumber &&
+                analysisCurrency.AnalysisNumber4 < _mainModel.MinNumber &&
+                analysisCurrency.AnalysisNumber5 < _mainModel.MinNumber &&
+                analysisCurrency.AnalysisNumber6 < _mainModel.MinNumber)
+            {
+                return;
+            }
+            _mainModel.AnalysisCurrencies.Insert(currencyNum, analysisCurrency);
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -109,5 +155,63 @@ namespace WpfApp
 
 
         }
+
+        private void InitCurrencie_OnClick(object sender, RoutedEventArgs e)
+        {
+            _mainModel.Imported = false;
+            bibiList = new List<string>();
+            new Thread(() =>
+            {
+                try
+                {
+                    var webRequest = (HttpWebRequest)WebRequest.Create("https://www.okex.com/v2/markets/products");
+                    webRequest.Proxy = new WebProxy("127.0.0.1:25378");
+                    var webResponse = webRequest.GetResponse() as HttpWebResponse;
+                    if (webResponse == null)
+                    {
+                        this.Dispatcher.Invoke(() => { MessageBox.Show("导入币种失败，请检查网络"); });
+                        return;
+                    }
+                    using (var responseStream = new StreamReader(webResponse.GetResponseStream()))
+                    {
+                        var result = responseStream.ReadToEnd();
+                        responseStream.Close();
+                        var currencyRoot = JsonConvert.DeserializeObject<CurrencyRoot>(result);
+                        if (currencyRoot.data != null)
+                        {
+                            this.Dispatcher.Invoke(
+                                () =>
+                                {
+                                    foreach (var symbol in currencyRoot.data.Select(x => x.symbol))
+                                    {
+                                        var curNameList = symbol.Split('_');
+                                        foreach (var s in curNameList)
+                                        {
+                                            if (!bibiList.Contains(s))
+                                            {
+                                                bibiList.Add(s);
+                                            }
+                                        }
+                                    }
+                                    _mainModel.CurrencieNum = bibiList.Count;
+                                    bibiList = bibiList.OrderBy(x => x.ToLower()).ToList();
+                                });
+
+                        }
+
+                    }
+                }
+                catch (Exception exception)
+                {
+                    this.Dispatcher.Invoke(() => { MessageBox.Show("导入币种失败"); });
+                }
+                finally
+                {
+                    _mainModel.Imported = true;
+                    _mainModel.UpdateState(_mainModel.State);
+                }
+            }).Start();
+        }
+
     }
 }

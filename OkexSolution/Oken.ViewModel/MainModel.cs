@@ -17,6 +17,17 @@ namespace Oken.ViewModel
         private decimal _ethUsdtSell;
         private decimal _btcUsdtSell;
         private decimal _ethBtcSell;
+        private int _currencieNum;
+        private bool _imported = true;
+        private decimal _minNumber = 1;
+        private bool _enbleState;
+
+
+        public decimal MinNumber
+        {
+            get { return _minNumber; }
+            set { SetProperty(ref _minNumber, value); }
+        }
 
         public int State
         {
@@ -38,22 +49,30 @@ namespace Oken.ViewModel
 
         public void UpdateState(int state)
         {
+            EnbleState = false;
             State = state;
             switch (state)
             {
                 case 0:
+                    EnbleState = Imported == true;
                     StateName = "停止"; break;
                 case 1:
+                    Imported = false;
                     StateName = "启动中"; break;
                 case 2:
+                    Imported = false;
                     StateName = "正在连接"; break;
                 case 3:
+                    Imported = false;
                     StateName = "已连接"; break;
                 case 4:
+                    Imported = false;
                     StateName = "连接中断"; break;
                 case 5:
+                    Imported = false;
                     StateName = "连接中断...正在重连"; break;
                 case 6:
+                    EnbleState = Imported == true;
                     StateName = "重连失败"; break;
                 default: break;
             }
@@ -92,6 +111,24 @@ namespace Oken.ViewModel
         {
             get { return _ethBtcSell; }
             set { SetProperty(ref _ethBtcSell, value); }
+        }
+
+        public int CurrencieNum
+        {
+            get { return _currencieNum; }
+            set { SetProperty(ref _currencieNum, value); }
+        }
+
+        public bool Imported
+        {
+            get { return _imported; }
+            set { SetProperty(ref _imported, value); }
+        }
+
+        public bool EnbleState
+        {
+            get { return _enbleState; }
+            set { SetProperty(ref _enbleState, value); }
         }
     }
 }

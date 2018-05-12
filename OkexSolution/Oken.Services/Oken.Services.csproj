@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Currencie.cs" />
+    <Compile Include="CurrencyRoot.cs" />
     <Compile Include="Decorate.cs" />
     <Compile Include="BuissnesServiceImpl.cs" />
     <Compile Include="Contract.cs" />

@@ -21,7 +21,7 @@ namespace websocket
         public void onReceive(string msg)
         {
             var regex = new Regex(@"ok_sub_spot_(?<input>[^_]*)_(?<output>[^_]*)_ticker");
-            Console.WriteLine(msg);
+            //Console.WriteLine(msg);
             if (!regex.IsMatch(msg))
             {
                 if (msg == "{\"event\":\"pong\"}")
@@ -55,25 +55,17 @@ namespace websocket
                         default:
 
                             var currencieName = input.Value;
-                            var currencie = new Currencie();
-                            MemoryDB.dictionary.GetOrAdd(currencieName, currencie);
-                            switch (output.Value.ToLower())
+                            var value = new Currencie();
+                            MemoryDB.dictionary.AddOrUpdate(currencieName, s =>
                             {
-                                case "eth":
-                                    currencie.Buy_Eth = objContract.data.Buy();
-                                    currencie.Sell_Eth = objContract.data.Sell();
-                                    break;
-                                case "btc":
-                                    currencie.Buy_Btc = objContract.data.Buy();
-                                    currencie.Sell_Btc = objContract.data.Sell();
-                                    break;
-                                case "usdt":
-                                    currencie.Buy_Usdt = objContract.data.Buy();
-                                    currencie.Sell_Usdt = objContract.data.Sell();
-                                    break;
-                                default: return;
-                            }
-                            UpdateCurrencyBodyAction?.BeginInvoke(matchput, input.Value.ToLower(), currencie, null, null);
+                                var currencie = value;
+                                return Clone(output.Value, currencie, objContract);
+                            }, (s, currencie) =>
+                            {
+                                return Clone(output.Value, currencie, objContract);
+                            });
+                            MemoryDB.dictionary.TryGetValue(currencieName, out value);
+                            UpdateCurrencyBodyAction?.BeginInvoke(matchput, input.Value.ToLower(), value, null, null);
                             break;
 
                     }
@@ -84,6 +76,26 @@ namespace websocket
             {
                 Console.WriteLine(e);
             }
+        }
+
+        public Currencie Clone(string outputName, Currencie currencie, Contract objContract)
+        {
+            switch (outputName.ToLower())
+            {
+                case "eth":
+                    currencie.Buy_Eth = objContract.data.Buy();
+                    currencie.Sell_Eth = objContract.data.Sell();
+                    break;
+                case "btc":
+                    currencie.Buy_Btc = objContract.data.Buy();
+                    currencie.Sell_Btc = objContract.data.Sell();
+                    break;
+                case "usdt":
+                    currencie.Buy_Usdt = objContract.data.Buy();
+                    currencie.Sell_Usdt = objContract.data.Sell();
+                    break;
+            }
+            return currencie;
         }
     }
 }
