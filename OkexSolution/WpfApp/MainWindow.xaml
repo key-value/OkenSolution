@@ -9,6 +9,20 @@
     <Window.DataContext>
         <viewModel:MainModel></viewModel:MainModel>
     </Window.DataContext>
+    <Window.Resources>
+       <ResourceDictionary>
+
+           <DataTemplate x:Key="GridDataTemplate">
+                <TextBlock Name="text"  Text="{Binding AnalysisNumber1,StringFormat={}{0:N4}}" >
+               </TextBlock>
+               <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding AnalysisNumber1, Converter={StaticResource DataConvert}}"  Value="True">
+                       <Setter Property="TextBlock.Foreground" Value="Red" />
+                   </DataTrigger>
+               </DataTemplate.Triggers>
+           </DataTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
     <DockPanel >
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
             <Button Name="SocketClient" Content="启动" Height="40" Width="70" IsEnabled="{Binding EnbleState}" Click="SocketClient_OnClick"></Button>
@@ -156,18 +170,7 @@
             <ListView.View>
                 <GridView ColumnHeaderContainerStyle="{StaticResource DefaultGridViewColumnHeader}">
                     <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="auto"></GridViewColumn>
-                    <GridViewColumn Header="ETH->USDT" DisplayMemberBinding="{Binding AnalysisNumber1}" Width="Auto">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBlock Name="text"  Text="11111" >
-                                </TextBlock>
-                                <DataTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding Converter={StaticResource DataConvert}}"  Value="True">
-                                        <Setter TargetName="text" Property="Foreground" Value="Red" />
-                                    </DataTrigger>
-                                </DataTemplate.Triggers>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
+                    <GridViewColumn Header="ETH->USDT" Width="Auto" CellTemplate="{StaticResource GridDataTemplate}" >
                     </GridViewColumn>
                     <GridViewColumn Header="ETH->BTC" DisplayMemberBinding="{Binding AnalysisNumber2,StringFormat='0.#####'}" Width="Auto"></GridViewColumn>
                     <GridViewColumn Header="USDT->ETH" DisplayMemberBinding="{Binding AnalysisNumber3,StringFormat='0.#####'}" Width="Auto"></GridViewColumn>

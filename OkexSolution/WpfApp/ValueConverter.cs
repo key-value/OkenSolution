@@ -15,7 +15,7 @@ namespace WpfApp
         {
             if (null != value)
             {
-                if (int.TryParse(value.ToString(), out int number))
+                if (decimal.TryParse(value.ToString(), out decimal number))
                     return number > 1;
             }
             return false;
