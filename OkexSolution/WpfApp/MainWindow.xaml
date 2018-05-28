@@ -21,7 +21,6 @@
             <Label Name="LabelCurrencieNum" Margin="20,0,0,0" Content="{Binding CurrencieNum}" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"></Label>
         </StackPanel>
         <Border DockPanel.Dock="Top" BorderBrush="DodgerBlue" BorderThickness="0,1,0,1">
-
             <Grid Height="120" Margin="20,5,20,5"  >
                 <Grid.RowDefinitions>
                     <RowDefinition>
@@ -58,7 +57,7 @@
             </Grid>
 
         </Border>
-        <ListView BorderThickness="0" Margin="15,20,15,10"  DockPanel.Dock="Bottom"
+        <!--<ListView BorderThickness="0" Margin="15,20,15,10"  DockPanel.Dock="Bottom"
                   Focusable="False" SnapsToDevicePixels="True"
                   ItemsSource="{Binding AnalysisCurrencies}">
             <ListView.Resources>
@@ -119,7 +118,8 @@
                         <TextBlock  Name="TextAnalysisNumber1" TextAlignment="Center" Height="32" Text="{Binding Path=AnalysisNumber1,StringFormat='0.#####'}" FontSize="16" Padding="5"
                                            HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="1">
 
-                            <!--<TextBlock.Style>
+                            -->
+        <!--<TextBlock.Style>
                                 <Style>
                                     <Style.Triggers>
                                         <DataTrigger  Binding="{Binding AnalysisNumber1}"  Value="1">
@@ -128,6 +128,7 @@
                                     </Style.Triggers>
                                 </Style>
                             </TextBlock.Style>-->
+        <!--
                         </TextBlock>
                         <TextBlock  TextAlignment="Center" Height="32" Text="{Binding Path=AnalysisNumber2,StringFormat='0.#####'}" FontSize="16" Padding="5"
                                             HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Column="2">
@@ -148,8 +149,50 @@
 
                 </DataTemplate>
             </ListView.ItemTemplate>
+        </ListView>-->
+
+
+        <ListView Margin="3"   DockPanel.Dock="Bottom" x:Name="gridList"  Style="{StaticResource DefaultListView}" AlternationCount="1" ItemsSource="{Binding AnalysisCurrencies}">
+            <ListView.View>
+                <GridView ColumnHeaderContainerStyle="{StaticResource DefaultGridViewColumnHeader}">
+                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="auto"></GridViewColumn>
+                    <GridViewColumn Header="ETH->USDT" DisplayMemberBinding="{Binding AnalysisNumber1}" Width="Auto">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Name="text"  Text="11111" >
+                                </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Converter={StaticResource DataConvert}}"  Value="True">
+                                        <Setter TargetName="text" Property="Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="ETH->BTC" DisplayMemberBinding="{Binding AnalysisNumber2,StringFormat='0.#####'}" Width="Auto"></GridViewColumn>
+                    <GridViewColumn Header="USDT->ETH" DisplayMemberBinding="{Binding AnalysisNumber3,StringFormat='0.#####'}" Width="Auto"></GridViewColumn>
+                    <GridViewColumn Header="USDT->BTC" DisplayMemberBinding="{Binding AnalysisNumber4,StringFormat='0.#####'}" Width="Auto"></GridViewColumn>
+                    <GridViewColumn Header="BTC->ETH" DisplayMemberBinding="{Binding AnalysisNumber5,StringFormat='0.#####'}" Width="Auto"></GridViewColumn>
+                    <GridViewColumn Header="BTC->USDT" DisplayMemberBinding="{Binding AnalysisNumber6,StringFormat='0.#####'}" Width="Auto"></GridViewColumn>
+
+                </GridView>
+            </ListView.View>
         </ListView>
 
+
+
+
+        <!--<DataGrid x:Name="GridAnalysisNumber" Margin="5"  AutoGenerateColumns="False" ItemsSource="{Binding AnalysisCurrencies}"   DockPanel.Dock="Bottom">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="币名" Binding="{Binding Name}" Width="100"></DataGridTextColumn>
+                <DataGridTextColumn Header="A" MinWidth="10" Binding="{Binding AnalysisNumber1,StringFormat={}{0:N4}}"></DataGridTextColumn>
+                <DataGridTextColumn Header="A" MinWidth="10"  Binding="{Binding AnalysisNumber2,StringFormat={}{0:N4}}"></DataGridTextColumn>
+                <DataGridTextColumn Header="A" MinWidth="10"  Binding="{Binding AnalysisNumber3,StringFormat={}{0:N4}}"></DataGridTextColumn>
+                <DataGridTextColumn Header="A" MinWidth="10"  Binding="{Binding AnalysisNumber4,StringFormat={}{0:N4}}"></DataGridTextColumn>
+                <DataGridTextColumn Header="A" MinWidth="10"  Binding="{Binding AnalysisNumber5,StringFormat={}{0:N4}}"></DataGridTextColumn>
+                <DataGridTextColumn Header="A" MinWidth="10"  Binding="{Binding AnalysisNumber6,StringFormat={}{0:N4}}"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>-->
 
 
     </DockPanel>
