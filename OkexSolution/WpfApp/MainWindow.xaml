@@ -10,17 +10,9 @@
         <viewModel:MainModel></viewModel:MainModel>
     </Window.DataContext>
     <Window.Resources>
-       <ResourceDictionary>
+        <ResourceDictionary>
 
-           <DataTemplate x:Key="GridDataTemplate">
-                <TextBlock Name="text"  Text="{Binding AnalysisNumber1,StringFormat={}{0:N4}}" >
-               </TextBlock>
-               <DataTemplate.Triggers>
-                    <DataTrigger Binding="{Binding AnalysisNumber1, Converter={StaticResource DataConvert}}"  Value="True">
-                       <Setter Property="TextBlock.Foreground" Value="Red" />
-                   </DataTrigger>
-               </DataTemplate.Triggers>
-           </DataTemplate>
+
         </ResourceDictionary>
     </Window.Resources>
     <DockPanel >
@@ -31,7 +23,8 @@
             <Label Content="最小比值" Margin="50,0,0,0" VerticalAlignment="Center" Target="{Binding ElementName=TextBoxFilerNum}"></Label>
             <TextBox Name="TextBoxFilerNum" Margin="20,0,0,0" Text="{Binding MinNumber}" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"></TextBox>
             <Button Name="InitCurrencie" Content="导入" Margin="20,0,0,0" Height="40" Width="70" IsEnabled="{Binding Imported}" Click="InitCurrencie_OnClick"></Button>
-            <Label Content="内存币种数量" Margin="50,0,0,0" VerticalAlignment="Center" Target="{Binding ElementName=CurrencieNum}"></Label>
+
+            <Button Name="ReadCurrencie" Content="读取" Margin="20,0,0,0" Height="40" Width="70" IsEnabled="{Binding Imported}" Click="ReadCurrencie_OnClick"></Button>
             <Label Name="LabelCurrencieNum" Margin="20,0,0,0" Content="{Binding CurrencieNum}" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"></Label>
         </StackPanel>
         <Border DockPanel.Dock="Top" BorderBrush="DodgerBlue" BorderThickness="0,1,0,1">
@@ -170,13 +163,79 @@
             <ListView.View>
                 <GridView ColumnHeaderContainerStyle="{StaticResource DefaultGridViewColumnHeader}">
                     <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}" Width="auto"></GridViewColumn>
-                    <GridViewColumn Header="ETH->USDT" Width="Auto" CellTemplate="{StaticResource GridDataTemplate}" >
+                    <GridViewColumn Header="ETH->USDT" Width="Auto"  >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate >
+                                <TextBlock Name="text"  Text="{Binding AnalysisNumber1,StringFormat={}{0:N4}}" >
+                                </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding AnalysisNumber1, Converter={StaticResource DataConvert}}"  Value="True">
+                                        <Setter Property="TextBlock.Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="ETH->BTC" DisplayMemberBinding="{Binding AnalysisNumber2,StringFormat='0.#####'}" Width="Auto"></GridViewColumn>
-                    <GridViewColumn Header="USDT->ETH" DisplayMemberBinding="{Binding AnalysisNumber3,StringFormat='0.#####'}" Width="Auto"></GridViewColumn>
-                    <GridViewColumn Header="USDT->BTC" DisplayMemberBinding="{Binding AnalysisNumber4,StringFormat='0.#####'}" Width="Auto"></GridViewColumn>
-                    <GridViewColumn Header="BTC->ETH" DisplayMemberBinding="{Binding AnalysisNumber5,StringFormat='0.#####'}" Width="Auto"></GridViewColumn>
-                    <GridViewColumn Header="BTC->USDT" DisplayMemberBinding="{Binding AnalysisNumber6,StringFormat='0.#####'}" Width="Auto"></GridViewColumn>
+                    <GridViewColumn Header="ETH->BTC"  Width="Auto">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate >
+                                <TextBlock Name="text"  Text="{Binding AnalysisNumber2,StringFormat={}{0:N4}}" >
+                                </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding AnalysisNumber2, Converter={StaticResource DataConvert}}"  Value="True">
+                                        <Setter Property="TextBlock.Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate></GridViewColumn>
+                    <GridViewColumn Header="USDT->ETH" Width="Auto">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate >
+                                <TextBlock Name="text"  Text="{Binding AnalysisNumber3,StringFormat={}{0:N4}}" >
+                                </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding AnalysisNumber3, Converter={StaticResource DataConvert}}"  Value="True">
+                                        <Setter Property="TextBlock.Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate></GridViewColumn>
+                    <GridViewColumn Header="USDT->BTC"  Width="Auto">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate >
+                                <TextBlock Name="text"  Text="{Binding AnalysisNumber4,StringFormat={}{0:N4}}" >
+                                </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding AnalysisNumber4, Converter={StaticResource DataConvert}}"  Value="True">
+                                        <Setter Property="TextBlock.Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate></GridViewColumn>
+                    <GridViewColumn Header="BTC->ETH"  Width="Auto">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate >
+                                <TextBlock Name="text"  Text="{Binding AnalysisNumber5,StringFormat={}{0:N4}}" >
+                                </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding AnalysisNumber5, Converter={StaticResource DataConvert}}"  Value="True">
+                                        <Setter Property="TextBlock.Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate></GridViewColumn>
+                    <GridViewColumn Header="BTC->USDT"  Width="Auto">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate >
+                                <TextBlock Name="text"  Text="{Binding AnalysisNumber6,StringFormat={}{0:N4}}" >
+                                </TextBlock>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding AnalysisNumber6, Converter={StaticResource DataConvert}}"  Value="True">
+                                        <Setter Property="TextBlock.Foreground" Value="Red" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate></GridViewColumn>
 
                 </GridView>
             </ListView.View>

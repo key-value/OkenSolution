@@ -164,7 +164,7 @@ namespace WpfApp
             {
                 try
                 {
-                    var webRequest = (HttpWebRequest)WebRequest.Create("https://www.okex.com/v2/markets/products");
+                    var webRequest = (HttpWebRequest)WebRequest.Create("https://www.okex.com/v2/spot/markets/tickers");
                     webRequest.Proxy = new WebProxy("127.0.0.1:25378");
                     var webResponse = webRequest.GetResponse() as HttpWebResponse;
                     if (webResponse == null)
@@ -213,5 +213,32 @@ namespace WpfApp
             }).Start();
         }
 
+        private void ReadCurrencie_OnClick(object sender, RoutedEventArgs e)
+        {
+            var excelEdit = new ExcelEdit();
+            excelEdit.Open(AppDomain.CurrentDomain.BaseDirectory + "Currencie.xlsx");
+            var sheet = excelEdit.GetSheet("default");
+            var rowCount = sheet.UsedRange.Rows.Count;
+            for (int i = 1; i <= rowCount; i++)//
+            {
+                if (sheet.Rows[i] == null)
+                {
+                    continue;
+                }
+                var curNameList = sheet.Cells[i,"A"].Value2.ToString().Split('_');
+                foreach (var s in curNameList)
+                {
+                    if (!bibiList.Contains(s))
+                    {
+                        bibiList.Add(s);
+                    }
+                }
+            }
+            _mainModel.CurrencieNum = bibiList.Count;
+            bibiList = bibiList.OrderBy(x => x.ToLower()).ToList();
+
+            _mainModel.Imported = true;
+            _mainModel.UpdateState(_mainModel.State);
+        }
     }
 }
