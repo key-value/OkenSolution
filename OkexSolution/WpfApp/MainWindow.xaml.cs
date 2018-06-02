@@ -166,6 +166,10 @@ namespace WpfApp
                 analysisNumber = analysisCurrency.AnalysisNumber6;
             }
             this._mainModel.CurrencieMessages.Add(new AnalysisMessage(arg3, analysisNumber, DateTime.Now, analysisName));
+            if (_mainModel.CurrencieMessages.Count > 200)
+            {
+                _mainModel.CurrencieMessages.RemoveAt(0);
+            }
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
