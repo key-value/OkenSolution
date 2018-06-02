@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnalysisCurrency.cs" />
+    <Compile Include="AnalysisMessage.cs" />
     <Compile Include="MainModel.cs" />
     <Compile Include="ObservableObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

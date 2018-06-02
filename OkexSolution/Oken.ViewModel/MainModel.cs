@@ -10,6 +10,7 @@ namespace Oken.ViewModel
     {
         private int _state;
         private ObservableCollection<AnalysisCurrency> _analysisCurrencies = new ObservableCollection<AnalysisCurrency>();
+        private ObservableCollection<AnalysisMessage> _currencieMessages = new ObservableCollection<AnalysisMessage>();
         private string _stateName;
         private decimal _ethUsdtBuy;
         private decimal _btcUsdtBuy;
@@ -45,6 +46,14 @@ namespace Oken.ViewModel
         {
             get { return _analysisCurrencies; }
             set { _analysisCurrencies = value; }
+        }
+
+
+
+        public ObservableCollection<AnalysisMessage> CurrencieMessages
+        {
+            get { return _currencieMessages; }
+            set { _currencieMessages = value; }
         }
 
         public void UpdateState(int state)

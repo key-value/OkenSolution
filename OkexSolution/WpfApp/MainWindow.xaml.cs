@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -84,7 +85,23 @@ namespace WpfApp
                 }
 
             });
+
+            Task.Factory.StartNew(() =>
+            {
+                if (DateTime.Now > lastTime.AddSeconds(20))
+                {
+                    // 然后在程序中调用
+                    //uint beep = 0x00000010;
+                    //MessageBeep(beep);
+                    Console.Beep(500, 100);
+                    lastTime = DateTime.Now;
+                }
+            });
+
         }
+
+        private static DateTime lastTime = DateTime.Now;
+
 
         private void FreshTable(string arg3, Currencie arg2)
         {
@@ -116,6 +133,39 @@ namespace WpfApp
                 return;
             }
             _mainModel.AnalysisCurrencies.Insert(currencyNum, analysisCurrency);
+            string analysisName = "";
+            decimal analysisNumber = 0;
+            if (analysisCurrency.AnalysisNumber1 > _mainModel.MinNumber)
+            {
+                analysisName = "ETH->USDT";
+                analysisNumber = analysisCurrency.AnalysisNumber1;
+            }
+            if (analysisCurrency.AnalysisNumber2 > _mainModel.MinNumber)
+            {
+                analysisName = "ETH->BTC";
+                analysisNumber = analysisCurrency.AnalysisNumber2;
+            }
+            if (analysisCurrency.AnalysisNumber3 > _mainModel.MinNumber)
+            {
+                analysisName = "USDT->ETH";
+                analysisNumber = analysisCurrency.AnalysisNumber3;
+            }
+            if (analysisCurrency.AnalysisNumber4 > _mainModel.MinNumber)
+            {
+                analysisName = "USDT->BTC";
+                analysisNumber = analysisCurrency.AnalysisNumber4;
+            }
+            if (analysisCurrency.AnalysisNumber5 > _mainModel.MinNumber)
+            {
+                analysisName = "BTC->ETH";
+                analysisNumber = analysisCurrency.AnalysisNumber5;
+            }
+            if (analysisCurrency.AnalysisNumber6 > _mainModel.MinNumber)
+            {
+                analysisName = "BTC->USDT";
+                analysisNumber = analysisCurrency.AnalysisNumber6;
+            }
+            this._mainModel.CurrencieMessages.Add(new AnalysisMessage(arg3, analysisNumber, DateTime.Now, analysisName));
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -215,30 +265,33 @@ namespace WpfApp
 
         private void ReadCurrencie_OnClick(object sender, RoutedEventArgs e)
         {
-            var excelEdit = new ExcelEdit();
-            excelEdit.Open(AppDomain.CurrentDomain.BaseDirectory + "Currencie.xlsx");
-            var sheet = excelEdit.GetSheet("default");
-            var rowCount = sheet.UsedRange.Rows.Count;
-            for (int i = 1; i <= rowCount; i++)//
+            Task.Factory.StartNew(() =>
             {
-                if (sheet.Rows[i] == null)
+                var excelEdit = new ExcelEdit();
+                excelEdit.Open(AppDomain.CurrentDomain.BaseDirectory + "Currencie.xlsx");
+                var sheet = excelEdit.GetSheet("default");
+                var rowCount = sheet.UsedRange.Rows.Count;
+                for (int i = 1; i <= rowCount; i++) //
                 {
-                    continue;
-                }
-                var curNameList = sheet.Cells[i,"A"].Value2.ToString().Split('_');
-                foreach (var s in curNameList)
-                {
-                    if (!bibiList.Contains(s))
+                    if (sheet.Rows[i] == null)
                     {
-                        bibiList.Add(s);
+                        continue;
+                    }
+                    var curNameList = sheet.Cells[i, "A"].Value2.ToString().Split('_');
+                    foreach (var s in curNameList)
+                    {
+                        if (!bibiList.Contains(s))
+                        {
+                            bibiList.Add(s);
+                        }
                     }
                 }
-            }
-            _mainModel.CurrencieNum = bibiList.Count;
-            bibiList = bibiList.OrderBy(x => x.ToLower()).ToList();
+                _mainModel.CurrencieNum = bibiList.Count;
+                bibiList = bibiList.OrderBy(x => x.ToLower()).ToList();
 
-            _mainModel.Imported = true;
-            _mainModel.UpdateState(_mainModel.State);
+                _mainModel.Imported = true;
+                _mainModel.UpdateState(_mainModel.State);
+            });
         }
     }
 }

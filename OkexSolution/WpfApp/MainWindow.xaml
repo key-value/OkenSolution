@@ -19,8 +19,8 @@
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" VerticalAlignment="Center" Margin="10">
             <Button Name="SocketClient" Content="启动" Height="40" Width="70" IsEnabled="{Binding EnbleState}" Click="SocketClient_OnClick"></Button>
             <!--<Label Content="{Binding State}" Margin="50,0,0,0" VerticalAlignment="Center"></Label>-->
-            <Label Content="{Binding StateName}" Margin="50,0,0,0" VerticalAlignment="Center"></Label>
-            <Label Content="最小比值" Margin="50,0,0,0" VerticalAlignment="Center" Target="{Binding ElementName=TextBoxFilerNum}"></Label>
+            <Label Content="{Binding StateName}" Margin="20,0,0,0" VerticalAlignment="Center"></Label>
+            <Label Content="最小比值" Margin="30,0,0,0" VerticalAlignment="Center" Target="{Binding ElementName=TextBoxFilerNum}"></Label>
             <TextBox Name="TextBoxFilerNum" Margin="20,0,0,0" Text="{Binding MinNumber}" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"></TextBox>
             <Button Name="InitCurrencie" Content="导入" Margin="20,0,0,0" Height="40" Width="70" IsEnabled="{Binding Imported}" Click="InitCurrencie_OnClick"></Button>
 
@@ -38,9 +38,10 @@
                     </RowDefinition>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition  Width="250"></ColumnDefinition>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.Resources>
                     <Style TargetType="Label">
@@ -61,6 +62,38 @@
                 <Label Content="{Binding btc_usdt_Sell}" Grid.Row="2" Grid.Column="0"></Label>
                 <Label Content="{Binding eth_btc_Sell}" Grid.Row="2" Grid.Column="1"></Label>
                 <Label Content="{Binding eth_usdt_Sell}" Grid.Row="2" Grid.Column="2"></Label>
+                <ListView Grid.Column="3" Grid.RowSpan="3" ItemsSource="{Binding CurrencieMessages}">
+                    <ListView.Style>
+                        <Style>
+                            <Setter Property="FocusManager.IsFocusScope" Value="False"></Setter>
+                            <!--<Setter Property="ItemsControl.Width" Value=""></Setter>-->
+                            <Setter Property="ItemsControl.Padding" Value="0"></Setter>
+                        </Style>
+                    </ListView.Style>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}" >
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <!--<Grid VerticalAlignment="Center" Width="{Binding Path=Width, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                            </Grid>-->
+                            <StackPanel Orientation="Horizontal" >
+                                <Label FontSize="13" Width="25px" Content="{Binding Name}" Grid.Column="0" ></Label>
+                                <Label FontSize="13" Content="{Binding BiName}" Margin="5,0" Grid.Column="1"></Label>
+                                <Label FontSize="13" Content="{Binding Number}"  Grid.Column="2"></Label>
+                                <Label FontSize="13" Content="{Binding UpdateTime}"  Margin="15,0,0,0" Grid.Column="3"></Label>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </Grid>
 
         </Border>
@@ -187,7 +220,8 @@
                                     </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>
-                        </GridViewColumn.CellTemplate></GridViewColumn>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="USDT->ETH" Width="Auto">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate >
@@ -199,7 +233,8 @@
                                     </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>
-                        </GridViewColumn.CellTemplate></GridViewColumn>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="USDT->BTC"  Width="Auto">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate >
@@ -211,7 +246,8 @@
                                     </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>
-                        </GridViewColumn.CellTemplate></GridViewColumn>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="BTC->ETH"  Width="Auto">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate >
@@ -223,7 +259,8 @@
                                     </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>
-                        </GridViewColumn.CellTemplate></GridViewColumn>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="BTC->USDT"  Width="Auto">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate >
@@ -235,7 +272,8 @@
                                     </DataTrigger>
                                 </DataTemplate.Triggers>
                             </DataTemplate>
-                        </GridViewColumn.CellTemplate></GridViewColumn>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
                 </GridView>
             </ListView.View>
