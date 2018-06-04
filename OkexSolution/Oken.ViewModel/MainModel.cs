@@ -48,7 +48,7 @@ namespace Oken.ViewModel
             set { _analysisCurrencies = value; }
         }
 
-
+        public List<AnalysisCurrency> AllCurrencies { get; set; } = new List<AnalysisCurrency>();
 
         public ObservableCollection<AnalysisMessage> CurrencieMessages
         {

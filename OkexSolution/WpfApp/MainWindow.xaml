@@ -21,7 +21,8 @@
             <!--<Label Content="{Binding State}" Margin="50,0,0,0" VerticalAlignment="Center"></Label>-->
             <Label Content="{Binding StateName}" Margin="20,0,0,0" VerticalAlignment="Center"></Label>
             <Label Content="最小比值" Margin="30,0,0,0" VerticalAlignment="Center" Target="{Binding ElementName=TextBoxFilerNum}"></Label>
-            <TextBox Name="TextBoxFilerNum" Margin="20,0,0,0" Text="{Binding MinNumber}" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"></TextBox>
+            <TextBox Name="TextBoxFilerNum" Margin="20,0,0,0" Text="{Binding MinNumber}" Width="80" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20"></TextBox>
+            <Button Name="Refresh" Content="刷新最小值" Click="Refresh_OnClick"></Button>
             <Button Name="InitCurrencie" Content="导入" Margin="20,0,0,0" Height="40" Width="70" IsEnabled="{Binding Imported}" Click="InitCurrencie_OnClick"></Button>
 
             <Button Name="ReadCurrencie" Content="读取" Margin="20,0,0,0" Height="40" Width="70" IsEnabled="{Binding Imported}" Click="ReadCurrencie_OnClick"></Button>

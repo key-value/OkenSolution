@@ -88,7 +88,7 @@ namespace WpfApp
 
             Task.Factory.StartNew(() =>
             {
-                if (DateTime.Now > lastTime.AddSeconds(20))
+                if (DateTime.Now > lastTime.AddSeconds(1))
                 {
                     // 然后在程序中调用
                     //uint beep = 0x00000010;
@@ -106,17 +106,19 @@ namespace WpfApp
         private void FreshTable(string arg3, Currencie arg2)
         {
             var currencyNum = 0;
-            var analysisCurrency = _mainModel.AnalysisCurrencies.FirstOrDefault(x => x.Name == arg3);
+            var analysisCurrency = _mainModel.AllCurrencies.FirstOrDefault(x => x.Name == arg3);
             currencyNum = bibiList.IndexOf(arg3);
             if (analysisCurrency != null)
             {
                 _mainModel.AnalysisCurrencies.Remove(analysisCurrency);
+                _mainModel.AllCurrencies.Remove(analysisCurrency);
             }
             else
             {
                 analysisCurrency = new AnalysisCurrency();
                 analysisCurrency.Name = arg3;
             }
+            _mainModel.AllCurrencies.Add(analysisCurrency);
             if (currencyNum > _mainModel.AnalysisCurrencies.Count)
             {
                 currencyNum = _mainModel.AnalysisCurrencies.Count;
@@ -132,6 +134,7 @@ namespace WpfApp
             {
                 return;
             }
+
             _mainModel.AnalysisCurrencies.Insert(currencyNum, analysisCurrency);
             string analysisName = "";
             decimal analysisNumber = 0;
@@ -296,6 +299,26 @@ namespace WpfApp
                 _mainModel.Imported = true;
                 _mainModel.UpdateState(_mainModel.State);
             });
+        }
+
+        private void Refresh_OnClick(object sender, RoutedEventArgs e)
+        {
+            _mainModel.AnalysisCurrencies.Clear();
+            _mainModel.CurrencieMessages.Clear();
+            foreach (var mainModelAllCurrency in _mainModel.AllCurrencies.OrderBy(x => x.Name))
+            {
+                if (mainModelAllCurrency.AnalysisNumber1 < _mainModel.MinNumber &&
+                    mainModelAllCurrency.AnalysisNumber2 < _mainModel.MinNumber &&
+                    mainModelAllCurrency.AnalysisNumber3 < _mainModel.MinNumber &&
+                    mainModelAllCurrency.AnalysisNumber4 < _mainModel.MinNumber &&
+                    mainModelAllCurrency.AnalysisNumber5 < _mainModel.MinNumber &&
+                    mainModelAllCurrency.AnalysisNumber6 < _mainModel.MinNumber)
+                {
+                    continue;
+                }
+
+                _mainModel.AnalysisCurrencies.Add(mainModelAllCurrency);
+            }
         }
     }
 }
