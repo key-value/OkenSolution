@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -93,7 +94,8 @@ namespace WpfApp
                     // 然后在程序中调用
                     //uint beep = 0x00000010;
                     //MessageBeep(beep);
-                    Console.Beep(500, 100);
+                    //Console.Beep(500, 100);
+                    Play();
                     lastTime = DateTime.Now;
                 }
             });
@@ -319,6 +321,16 @@ namespace WpfApp
 
                 _mainModel.AnalysisCurrencies.Add(mainModelAllCurrency);
             }
+        }
+
+        private void Play()
+        {
+            SoundPlayer soundPlayer =
+                new SoundPlayer(System.Environment.CurrentDirectory + @"\20.wav");
+            //或者
+            //SoundPlayer soundPlayer = new SoundPlayer(@"Resources\Audio\didi.wav");
+
+            soundPlayer.PlayLooping();
         }
     }
 }
