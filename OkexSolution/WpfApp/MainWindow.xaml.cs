@@ -31,12 +31,18 @@ namespace WpfApp
     public partial class MainWindow : Window
     {
         static string url = "wss://real.okex.com:10440/websocket/okexapi";
+
         //国际站配置为"wss://real.okcoin.com:10440/websocket/okcoinapi"
         List<string> bibiList = new List<string>();
 
         private MainModel _mainModel = new MainModel();
 
         WebSocketBase wb;
+
+
+        SoundPlayer soundPlayer =
+            new SoundPlayer(System.Environment.CurrentDirectory + @"\20.wav");
+
         public MainWindow()
         {
             InitializeComponent();
@@ -47,11 +53,13 @@ namespace WpfApp
         }
 
         private object obj = new object();
+
         private void BuissnesServiceImpl_UpdateCurrencyBodyAction(string arg1, string arg3, Currencie arg2)
         {
+            var hit    = false;
+            var result = false;
             this.Dispatcher.Invoke(() =>
             {
-                var hit = false;
                 switch (arg1)
                 {
                     case "btc_usdt":
@@ -77,37 +85,38 @@ namespace WpfApp
                     var newList = MemoryDB.dictionary.ToDictionary(x => x.Key, x => x.Value);
                     foreach (var currency in newList)
                     {
-                        FreshTable(currency.Key, currency.Value);
+                        result = result || FreshTable(currency.Key, currency.Value);
                     }
                 }
                 else
                 {
-                    FreshTable(arg3, arg2);
+                    result = FreshTable(arg3, arg2);
                 }
-
             });
 
-            Task.Factory.StartNew(() =>
+            if (result)
             {
-                if (DateTime.Now > lastTime.AddSeconds(1))
+                Task.Factory.StartNew(() =>
                 {
-                    // 然后在程序中调用
-                    //uint beep = 0x00000010;
-                    //MessageBeep(beep);
-                    //Console.Beep(500, 100);
-                    Play();
-                    lastTime = DateTime.Now;
-                }
-            });
-
+                    if (DateTime.Now > lastTime.AddSeconds(1))
+                    {
+                        // 然后在程序中调用
+                        //uint beep = 0x00000010;
+                        //MessageBeep(beep);
+                        //Console.Beep(500, 100);
+                        Play();
+                        lastTime = DateTime.Now;
+                    }
+                });
+            }
         }
 
         private static DateTime lastTime = DateTime.Now;
 
 
-        private void FreshTable(string arg3, Currencie arg2)
+        private bool FreshTable(string arg3, Currencie arg2)
         {
-            var currencyNum = 0;
+            var currencyNum      = 0;
             var analysisCurrency = _mainModel.AllCurrencies.FirstOrDefault(x => x.Name == arg3);
             currencyNum = bibiList.IndexOf(arg3);
             if (analysisCurrency != null)
@@ -120,11 +129,13 @@ namespace WpfApp
                 analysisCurrency = new AnalysisCurrency();
                 analysisCurrency.Name = arg3;
             }
+
             _mainModel.AllCurrencies.Add(analysisCurrency);
             if (currencyNum > _mainModel.AnalysisCurrencies.Count)
             {
                 currencyNum = _mainModel.AnalysisCurrencies.Count;
             }
+
             var decorate = new Decorate();
             decorate.Analysis(analysisCurrency, this._mainModel, arg2);
             if (analysisCurrency.AnalysisNumber1 < _mainModel.MinNumber &&
@@ -134,62 +145,77 @@ namespace WpfApp
                 analysisCurrency.AnalysisNumber5 < _mainModel.MinNumber &&
                 analysisCurrency.AnalysisNumber6 < _mainModel.MinNumber)
             {
-                return;
+                return false;
             }
 
             _mainModel.AnalysisCurrencies.Insert(currencyNum, analysisCurrency);
-            string analysisName = "";
+            string  analysisName   = "";
             decimal analysisNumber = 0;
             if (analysisCurrency.AnalysisNumber1 > _mainModel.MinNumber)
             {
                 analysisName = "ETH->USDT";
                 analysisNumber = analysisCurrency.AnalysisNumber1;
+                this._mainModel.CurrencieMessages.Add(new AnalysisMessage(arg3, analysisNumber, DateTime.Now,
+                    analysisName));
             }
+
             if (analysisCurrency.AnalysisNumber2 > _mainModel.MinNumber)
             {
                 analysisName = "ETH->BTC";
                 analysisNumber = analysisCurrency.AnalysisNumber2;
+                this._mainModel.CurrencieMessages.Add(new AnalysisMessage(arg3, analysisNumber, DateTime.Now,
+                    analysisName));
             }
+
             if (analysisCurrency.AnalysisNumber3 > _mainModel.MinNumber)
             {
                 analysisName = "USDT->ETH";
                 analysisNumber = analysisCurrency.AnalysisNumber3;
+                this._mainModel.CurrencieMessages.Add(new AnalysisMessage(arg3, analysisNumber, DateTime.Now,
+                    analysisName));
             }
+
             if (analysisCurrency.AnalysisNumber4 > _mainModel.MinNumber)
             {
                 analysisName = "USDT->BTC";
                 analysisNumber = analysisCurrency.AnalysisNumber4;
+                this._mainModel.CurrencieMessages.Add(new AnalysisMessage(arg3, analysisNumber, DateTime.Now,
+                    analysisName));
             }
+
             if (analysisCurrency.AnalysisNumber5 > _mainModel.MinNumber)
             {
                 analysisName = "BTC->ETH";
                 analysisNumber = analysisCurrency.AnalysisNumber5;
+                this._mainModel.CurrencieMessages.Add(new AnalysisMessage(arg3, analysisNumber, DateTime.Now,
+                    analysisName));
             }
+
             if (analysisCurrency.AnalysisNumber6 > _mainModel.MinNumber)
             {
                 analysisName = "BTC->USDT";
                 analysisNumber = analysisCurrency.AnalysisNumber6;
+                this._mainModel.CurrencieMessages.Add(new AnalysisMessage(arg3, analysisNumber, DateTime.Now,
+                    analysisName));
             }
-            this._mainModel.CurrencieMessages.Add(new AnalysisMessage(arg3, analysisNumber, DateTime.Now, analysisName));
+
             if (_mainModel.CurrencieMessages.Count > 200)
             {
                 _mainModel.CurrencieMessages.RemoveAt(0);
             }
+
+            return true;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             WebSocketService wss = new BuissnesServiceImpl();
             wb = new WebSocketBase(url, wss);
-
         }
 
         private void BuissnesServiceImpl_StateChangeAction(int obj)
         {
-            this.Dispatcher.Invoke(() =>
-            {
-                _mainModel.UpdateState(3);
-            });
+            this.Dispatcher.Invoke(() => { _mainModel.UpdateState(3); });
         }
 
         private void SocketClient_OnClick(object sender, RoutedEventArgs e)
@@ -209,10 +235,9 @@ namespace WpfApp
                     rootobjects.AddRange(Rootobject.CreateNewList(bibi));
                     wb.send(JsonConvert.SerializeObject(rootobjects));
                 }
+
                 _mainModel.UpdateState(2);
             });
-
-
         }
 
         private void InitCurrencie_OnClick(object sender, RoutedEventArgs e)
@@ -223,7 +248,7 @@ namespace WpfApp
             {
                 try
                 {
-                    var webRequest = (HttpWebRequest)WebRequest.Create("https://www.okex.com/v2/spot/markets/tickers");
+                    var webRequest = (HttpWebRequest) WebRequest.Create("https://www.okex.com/v2/spot/markets/tickers");
                     webRequest.Proxy = new WebProxy("127.0.0.1:25378");
                     var webResponse = webRequest.GetResponse() as HttpWebResponse;
                     if (webResponse == null)
@@ -231,6 +256,7 @@ namespace WpfApp
                         this.Dispatcher.Invoke(() => { MessageBox.Show("导入币种失败，请检查网络"); });
                         return;
                     }
+
                     using (var responseStream = new StreamReader(webResponse.GetResponseStream()))
                     {
                         var result = responseStream.ReadToEnd();
@@ -252,12 +278,11 @@ namespace WpfApp
                                             }
                                         }
                                     }
+
                                     _mainModel.CurrencieNum = bibiList.Count;
                                     bibiList = bibiList.OrderBy(x => x.ToLower()).ToList();
                                 });
-
                         }
-
                     }
                 }
                 catch (Exception exception)
@@ -278,7 +303,7 @@ namespace WpfApp
             {
                 var excelEdit = new ExcelEdit();
                 excelEdit.Open(AppDomain.CurrentDomain.BaseDirectory + "Currencie.xlsx");
-                var sheet = excelEdit.GetSheet("default");
+                var sheet    = excelEdit.GetSheet("default");
                 var rowCount = sheet.UsedRange.Rows.Count;
                 for (int i = 1; i <= rowCount; i++) //
                 {
@@ -286,7 +311,8 @@ namespace WpfApp
                     {
                         continue;
                     }
-                    var curNameList = sheet.Cells[i, "A"].Value2.ToString().Split('_');
+
+                    var curNameList = sheet.Cells[i, "A"].Value.ToString().Split('_');
                     foreach (var s in curNameList)
                     {
                         if (!bibiList.Contains(s))
@@ -295,6 +321,7 @@ namespace WpfApp
                         }
                     }
                 }
+
                 _mainModel.CurrencieNum = bibiList.Count;
                 bibiList = bibiList.OrderBy(x => x.ToLower()).ToList();
 
@@ -325,12 +352,10 @@ namespace WpfApp
 
         private void Play()
         {
-            SoundPlayer soundPlayer =
-                new SoundPlayer(System.Environment.CurrentDirectory + @"\20.wav");
             //或者
             //SoundPlayer soundPlayer = new SoundPlayer(@"Resources\Audio\didi.wav");
 
-            soundPlayer.PlayLooping();
+            soundPlayer.Play();
         }
     }
 }
